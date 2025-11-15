@@ -1,14 +1,14 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'alphabets'
+  protected tableName = 'lessons'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('letter').notNullable()
-      table.string('romanized').notNullable()
-      table.text('description').notNullable()
+      table.string('title')
+      table.text('description')
+      table.enum('level', ['Beginner', 'Intermediate', 'Hard'])
       table.integer('file_id').unsigned().references('id').inTable('files').onDelete('CASCADE')
       table.timestamp('created_at')
       table.timestamp('updated_at')

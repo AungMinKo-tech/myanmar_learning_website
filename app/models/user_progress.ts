@@ -1,21 +1,21 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-export default class Alphabet extends BaseModel {
+export default class UserProgress extends BaseModel {
   @column({ isPrimary: true })
   declare public id: number
 
   @column()
-  declare public letter: string
+  declare public user_id: number
 
   @column()
-  declare public romanized: string
+  declare public lesson_id: number
 
   @column()
-  declare public description: string
+  declare public progress_percent: string
 
   @column()
-  declare public file_id: number
+  declare public is_completed: boolean
 
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
