@@ -12,6 +12,7 @@ import { middleware } from './kernel.js'
 
 const AuthController = () => import('#controllers/auth_controller')
 const AlphabetsController = () => import('#controllers/alphabets_controller')
+const LessonsController = () => import('#controllers/lessons_controller')
 
 router.get('/', async () => {
   return {
@@ -34,5 +35,15 @@ router
     router.post('/alphabets', [AlphabetsController, 'store'])
     router.put('/alphabets/:id', [AlphabetsController, 'update'])
     router.delete('/alphabets/:id', [AlphabetsController, 'destroy'])
+  })
+  .prefix('/v1')
+
+router
+  .group(() => {
+    router.get('/lessons', [LessonsController, 'index'])
+    router.get('/lessons/:id', [LessonsController, 'show'])
+    router.post('/lessons', [LessonsController, 'store'])
+    router.put('/lessons/:id', [LessonsController, 'update'])
+    router.delete('/lessons/:id', [LessonsController, 'destroy'])
   })
   .prefix('/v1')

@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.string('title')
       table.text('description')
       table.enum('level', ['Beginner', 'Intermediate', 'Hard'])
-      table.integer('file_id').unsigned().references('id').inTable('files').onDelete('CASCADE')
+      table.enum('type', ['Multiple Choice', 'Matching'])
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

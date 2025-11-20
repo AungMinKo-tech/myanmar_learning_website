@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { Type } from '../enums/lesson_type.js'
+import { Difficulty } from '../enums/difficulty.js'
 
 export default class Lesson extends BaseModel {
   @column({ isPrimary: true })
@@ -13,7 +14,10 @@ export default class Lesson extends BaseModel {
   declare public description: string
 
   @column()
-  declare public level: Type
+  declare public level: Difficulty
+
+  @column()
+  declare public type: Type
 
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
