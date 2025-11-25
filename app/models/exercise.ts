@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
-import { Difficulty } from '../enums/difficulty.js'
+import { Type } from '../enums/lesson_type.js'
 
 export default class Exercise extends BaseModel {
   @column({ isPrimary: true })
@@ -13,7 +13,7 @@ export default class Exercise extends BaseModel {
   declare public question: string
 
   @column()
-  declare public type: Difficulty
+  declare public type: Type
 
   @column()
   declare public correct_answer: string
