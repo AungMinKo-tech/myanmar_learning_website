@@ -1,6 +1,6 @@
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
-import UserTransformer from '../transformers/admin/user_transformer.js'
+import UserTransformer from '../../transformers/admin/user_transformer.js'
 
 export default class UsersController {
   public async index({ request, response }: HttpContext) {

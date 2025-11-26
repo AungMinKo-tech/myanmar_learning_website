@@ -1,20 +1,34 @@
 import Lesson from '#models/lesson'
 import type { HttpContext } from '@adonisjs/core/http'
 import { createValidator, updateValidator } from '#validators/lesson'
-import { Type } from '../enums/lesson_type.js'
-import { Difficulty } from '../enums/difficulty.js'
+import { Type } from '../../enums/lesson_type.js'
+import { Difficulty } from '../../enums/difficulty.js'
+import LessonTransformer from '../../transformers/admin/lesson_transformer.js'
 
 export default class LessonsController {
-  public async index({ response }: HttpContext) {
+  public async index({ request, response }: HttpContext) {
     try {
-      const lesson = await Lesson.all()
+      const page = Number(request.input('page', 1))
+      const perPage = Number(request.input('perPage', 10))
+
+      const lessons = await Lesson.query().paginate(page, perPage)
 
       return response.ok({
-        data: lesson,
+        success: true,
+        content: lessons.all().map((lesson) => LessonTransformer.single(lesson)),
+        meta: {
+          total: lessons.total,
+          perPage: lessons.perPage,
+          currentPage: lessons.currentPage,
+          lastPage: lessons.lastPage,
+        },
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch lessons',
+        status: 500,
       })
     }
   }
@@ -25,16 +39,22 @@ export default class LessonsController {
 
       if (!lesson) {
         return response.notFound({
+          success: false,
           message: 'Lesson not found',
+          status: 404,
         })
       }
 
       return response.ok({
-        data: lesson,
+        success: true,
+        content: LessonTransformer.single(lesson),
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch lesson',
+        status: 500,
       })
     }
   }
@@ -51,18 +71,24 @@ export default class LessonsController {
       })
 
       return response.created({
+        success: true,
         message: 'Lesson created successfully',
-        data: lesson,
+        content: LessonTransformer.single(lesson),
+        status: 201,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to create lesson',
+        status: 500,
       })
     }
   }
@@ -73,7 +99,9 @@ export default class LessonsController {
 
       if (!Object.keys(payload).length) {
         return response.badRequest({
+          success: false,
           message: 'No data provided',
+          status: 400,
         })
       }
 
@@ -81,7 +109,9 @@ export default class LessonsController {
 
       if (!lesson) {
         return response.notFound({
+          success: false,
           message: 'Lesson not found',
+          status: 404,
         })
       }
 
@@ -108,18 +138,24 @@ export default class LessonsController {
       await lesson.save()
 
       return response.ok({
+        success: true,
         message: 'Alphabet updated successfully',
-        data: lesson,
+        content: LessonTransformer.single(lesson),
+        status: 200,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to update lesson',
+        status: 500,
       })
     }
   }
@@ -130,18 +166,24 @@ export default class LessonsController {
 
       if (!lesson) {
         return response.notFound({
+          success: false,
           message: 'Lesson not found',
+          status: 404,
         })
       }
 
       await lesson.delete()
 
       return response.ok({
+        success: true,
         message: 'Lesson deleted successfully',
+        status: 204,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to delete lesson',
+        status: 500,
       })
     }
   }

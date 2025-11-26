@@ -1,19 +1,33 @@
 import Exercise from '#models/exercise'
 import type { HttpContext } from '@adonisjs/core/http'
 import { createValidator, updateValidator } from '#validators/exercise'
-import { Type } from '../enums/lesson_type.js'
+import { Type } from '../../enums/lesson_type.js'
+import ExerciseTransformer from '../../transformers/admin/exercise_transformer.js'
 
 export default class ExercisesController {
-  public async index({ response }: HttpContext) {
+  public async index({ request, response }: HttpContext) {
     try {
-      const exercise = await Exercise.all()
+      const page = Number(request.input('page', 1))
+      const perPage = Number(request.input('perPage', 10))
 
-      return response.ok({
-        data: exercise,
+      const exercises = await Exercise.query().paginate(page, perPage)
+
+      return response.json({
+        success: true,
+        content: exercises.all().map((exercise) => ExerciseTransformer.single(exercise)),
+        meta: {
+          total: exercises.total,
+          perPage: exercises.perPage,
+          currentPage: exercises.currentPage,
+          lastPage: exercises.lastPage,
+        },
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch exercises',
+        status: 500,
       })
     }
   }
@@ -24,16 +38,22 @@ export default class ExercisesController {
 
       if (!exercise) {
         return response.notFound({
+          success: false,
           message: 'Exercise not found',
+          status: 404,
         })
       }
 
-      return response.ok({
-        data: exercise,
+      return response.json({
+        success: true,
+        content: ExerciseTransformer.single(exercise),
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch exercise',
+        status: 500,
       })
     }
   }
@@ -50,18 +70,24 @@ export default class ExercisesController {
       })
 
       return response.created({
+        success: true,
         message: 'Exercise created successfully',
-        data: exercise,
+        content: ExerciseTransformer.single(exercise),
+        status: 201,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to create exercise',
+        status: 500,
       })
     }
   }
@@ -72,7 +98,9 @@ export default class ExercisesController {
 
       if (!Object.keys(payload).length) {
         return response.badRequest({
+          success: false,
           message: 'No data provided',
+          status: 400,
         })
       }
 
@@ -80,7 +108,9 @@ export default class ExercisesController {
 
       if (!exercise) {
         return response.notFound({
+          success: false,
           message: 'Exercise not found',
+          status: 404,
         })
       }
 
@@ -102,19 +132,25 @@ export default class ExercisesController {
 
       await exercise.save()
 
-      return response.ok({
+      return response.json({
+        success: true,
         message: 'Alphabet updated successfully',
-        data: exercise,
+        content: ExerciseTransformer.single(exercise),
+        status: 200,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to update exercise',
+        status: 500,
       })
     }
   }
@@ -125,18 +161,24 @@ export default class ExercisesController {
 
       if (!exercise) {
         return response.notFound({
+          success: false,
           message: 'Exercise not found',
+          status: 404,
         })
       }
 
       await exercise.delete()
 
       return response.ok({
+        success: true,
         message: 'Exercise deleted successfully',
+        status: 204,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to delete exercise',
+        status: 500,
       })
     }
   }

@@ -3,7 +3,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Alphabet from '#models/alphabet'
 import File from '#models/file'
 import { createValidator, updateValidator } from '#validators/alphabet'
-import AlphabetTransformer from '../transformers/admin/alphabet_transformer.js'
+import AlphabetTransformer from '../../transformers/admin/alphabet_transformer.js'
 import Audio from '#models/audio'
 
 export default class AlphabetsController {
