@@ -1,17 +1,31 @@
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
+import UserTransformer from '../transformers/admin/user_transformer.js'
 
 export default class UsersController {
-  public async index({ response }: HttpContext) {
+  public async index({ request, response }: HttpContext) {
     try {
-      const user = await User.all()
+      const page = Number(request.input('page', 1))
+      const perPage = Number(request.input('perPage', 10))
 
-      return response.ok({
-        data: user,
+      const users = await User.query().paginate(page, perPage)
+
+      return response.json({
+        success: true,
+        content: users.all().map((user) => UserTransformer.single(user)),
+        meta: {
+          total: users.total,
+          perPage: users.perPage,
+          currentPage: users.currentPage,
+          lastPage: users.lastPage,
+        },
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch users',
+        status: 500,
       })
     }
   }
@@ -22,16 +36,22 @@ export default class UsersController {
 
       if (!user) {
         return response.notFound({
+          success: false,
           message: 'User not found',
+          status: 404,
         })
       }
 
       return response.ok({
-        data: user,
+        success: true,
+        content: UserTransformer.single(user),
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch user',
+        status: 500,
       })
     }
   }
@@ -42,18 +62,24 @@ export default class UsersController {
 
       if (!user) {
         return response.notFound({
+          success: false,
           message: 'User not found',
+          status: 404,
         })
       }
 
       await user.delete()
 
       return response.ok({
+        success: true,
         message: 'User deleted successfully',
+        status: 204,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to delete user',
+        status: 500,
       })
     }
   }
