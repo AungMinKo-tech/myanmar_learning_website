@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import Alphabet from '#models/alphabet'
 
 export default class File extends BaseModel {
   @column({ isPrimary: true })
@@ -16,4 +18,9 @@ export default class File extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare public updatedAt: DateTime
+
+  @hasMany(() => Alphabet, {
+    foreignKey: 'file_id',
+  })
+  declare public alphabets: HasMany<typeof Alphabet>
 }

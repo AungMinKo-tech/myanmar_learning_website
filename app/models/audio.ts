@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import Alphabet from '#models/alphabet'
 
 export default class Audio extends BaseModel {
   @column({ isPrimary: true })
@@ -13,4 +15,9 @@ export default class Audio extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasMany(() => Alphabet, {
+    foreignKey: 'audio_id',
+  })
+  declare alphabets: HasMany<typeof Alphabet>
 }
