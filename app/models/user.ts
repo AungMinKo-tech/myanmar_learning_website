@@ -21,6 +21,9 @@ export default class User extends BaseModel {
   @column()
   declare public role: string
 
+  @column()
+  declare public email_verified_at: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
 
