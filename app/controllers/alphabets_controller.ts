@@ -3,18 +3,36 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Alphabet from '#models/alphabet'
 import File from '#models/file'
 import { createValidator, updateValidator } from '#validators/alphabet'
+import AlphabetTransformer from '../transformers/admin/alphabet_transformer.js'
+import Audio from '#models/audio'
 
 export default class AlphabetsController {
-  public async index({ response }: HttpContext) {
+  public async index({ request, response }: HttpContext) {
     try {
-      const alphabets = await Alphabet.query().preload('file').preload('audio')
+      const page = Number(request.input('page', 1))
+      const perPage = Number(request.input('perPage', 10))
 
-      return response.ok({
-        data: alphabets,
+      const alphabets = await Alphabet.query()
+        .preload('file')
+        .preload('audio')
+        .paginate(page, perPage)
+
+      return response.json({
+        success: true,
+        content: alphabets.all().map((alphabet) => AlphabetTransformer.single(alphabet)),
+        meta: {
+          total: alphabets.total,
+          perPage: alphabets.perPage,
+          currentPage: alphabets.currentPage,
+          lastPage: alphabets.lastPage,
+        },
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch alphabets',
+        status: 500,
       })
     }
   }
@@ -29,16 +47,22 @@ export default class AlphabetsController {
 
       if (!alphabet) {
         return response.notFound({
+          success: false,
           message: 'Alphabet not found',
+          status: 404,
         })
       }
 
       return response.ok({
-        data: alphabet,
+        success: true,
+        content: AlphabetTransformer.single(alphabet),
+        status: 200,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to fetch alphabet',
+        status: 500,
       })
     }
   }
@@ -46,6 +70,16 @@ export default class AlphabetsController {
   public async store({ request, response }: HttpContext) {
     try {
       const payload = await request.validateUsing(createValidator)
+
+      let audioId: number | null = null
+
+      if (payload.audio) {
+        const audio = await Audio.create({
+          audio_path: payload.audio,
+        })
+
+        audioId = audio.id
+      }
 
       const file = await File.create({
         file_path: payload.image,
@@ -57,24 +91,31 @@ export default class AlphabetsController {
         romanized: payload.romanized,
         description: payload.description,
         file_id: file.id,
+        audio_id: audioId,
       })
 
       await alphabet.load('file')
       await alphabet.load('audio')
 
       return response.created({
+        success: true,
         message: 'Alphabet created successfully',
-        data: alphabet,
+        content: AlphabetTransformer.single(alphabet),
+        status: 201,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to create alphabet',
+        status: 500,
       })
     }
   }
@@ -85,7 +126,9 @@ export default class AlphabetsController {
 
       if (!Object.keys(payload).length) {
         return response.badRequest({
+          success: false,
           message: 'No data provided',
+          status: 400,
         })
       }
 
@@ -93,7 +136,9 @@ export default class AlphabetsController {
 
       if (!alphabet) {
         return response.notFound({
+          success: false,
           message: 'Alphabet not found',
+          status: 404,
         })
       }
 
@@ -113,23 +158,33 @@ export default class AlphabetsController {
         alphabet.file_id = await this.persistImage(payload.image, alphabet.file_id)
       }
 
+      if (payload.audio) {
+        alphabet.audio_id = await this.persistAudio(payload.audio, alphabet.audio_id)
+      }
+
       await alphabet.save()
       await alphabet.load('file')
       await alphabet.load('audio')
 
       return response.ok({
+        success: true,
         message: 'Alphabet updated successfully',
-        data: alphabet,
+        content: AlphabetTransformer.single(alphabet),
+        status: 200,
       })
     } catch (error) {
       if (error.messages) {
         return response.unprocessableEntity({
+          success: false,
           errors: error.messages,
+          status: 422,
         })
       }
 
       return response.internalServerError({
+        success: false,
         message: 'Failed to update alphabet',
+        status: 500,
       })
     }
   }
@@ -145,6 +200,7 @@ export default class AlphabetsController {
       }
 
       const fileId = alphabet.file_id
+      const audioId = alphabet.audio_id
       await alphabet.delete()
 
       if (fileId) {
@@ -154,12 +210,23 @@ export default class AlphabetsController {
         }
       }
 
+      if (audioId) {
+        const audio = await Audio.find(audioId)
+        if (audio) {
+          await audio.delete()
+        }
+      }
+
       return response.ok({
+        success: true,
         message: 'Alphabet deleted successfully',
+        status: 204,
       })
     } catch (error) {
       return response.internalServerError({
+        success: false,
         message: 'Failed to delete alphabet',
+        status: 500,
       })
     }
   }
@@ -181,5 +248,22 @@ export default class AlphabetsController {
     })
 
     return file.id
+  }
+
+  private async persistAudio(audioPath: string, existingAudioId?: number | null) {
+    if (existingAudioId) {
+      const audio = await Audio.find(existingAudioId)
+      if (audio) {
+        audio.audio_path = audioPath
+        await audio.save()
+        return audio.id
+      }
+    }
+
+    const audio = await Audio.create({
+      audio_path: audioPath,
+    })
+
+    return audio.id
   }
 }
