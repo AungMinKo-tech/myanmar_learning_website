@@ -11,6 +11,7 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
 const AuthController = () => import('#controllers/auth_controller')
+const UsersController = () => import('#controllers/users_controller')
 const AlphabetsController = () => import('#controllers/alphabets_controller')
 const LessonsController = () => import('#controllers/lessons_controller')
 const ExerciseController = () => import('#controllers/exercises_controller')
@@ -31,26 +32,22 @@ router
 
 router
   .group(() => {
+    router.get('/users', [UsersController, 'index'])
+    router.get('/users/:id', [UsersController, 'show'])
+    router.delete('/users/:id', [UsersController, 'destroy'])
+
     router.get('/alphabets', [AlphabetsController, 'index'])
     router.get('/alphabets/:id', [AlphabetsController, 'show'])
     router.post('/alphabets', [AlphabetsController, 'store'])
     router.put('/alphabets/:id', [AlphabetsController, 'update'])
     router.delete('/alphabets/:id', [AlphabetsController, 'destroy'])
-  })
-  .prefix('/v1')
 
-router
-  .group(() => {
     router.get('/lessons', [LessonsController, 'index'])
     router.get('/lessons/:id', [LessonsController, 'show'])
     router.post('/lessons', [LessonsController, 'store'])
     router.put('/lessons/:id', [LessonsController, 'update'])
     router.delete('/lessons/:id', [LessonsController, 'destroy'])
-  })
-  .prefix('/v1')
 
-router
-  .group(() => {
     router.get('/exercises', [ExerciseController, 'index'])
     router.get('/exercises/:id', [ExerciseController, 'show'])
     router.post('/exercises', [ExerciseController, 'store'])
