@@ -1,5 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import Exercise from '#models/exercise'
+import User from '#models/user'
+import Lesson from '#models/lesson'
 
 export default class UserExercise extends BaseModel {
   @column({ isPrimary: true })
@@ -25,4 +29,19 @@ export default class UserExercise extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare public updatedAt: DateTime
+
+  @belongsTo(() => Exercise, {
+    foreignKey: 'exercise_id',
+  })
+  declare public exercise: BelongsTo<typeof Exercise>
+
+  @belongsTo(() => User, {
+    foreignKey: 'user_id',
+  })
+  declare public user: BelongsTo<typeof User>
+
+  @belongsTo(() => Lesson, {
+    foreignKey: 'lesson_id',
+  })
+  declare public lesson: BelongsTo<typeof Lesson>
 }
