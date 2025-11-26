@@ -10,11 +10,11 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
-const AuthController = () => import('#controllers/auth_controller')
-const UsersController = () => import('#controllers/users_controller')
-const AlphabetsController = () => import('#controllers/alphabets_controller')
-const LessonsController = () => import('#controllers/lessons_controller')
-const ExerciseController = () => import('#controllers/exercises_controller')
+const AuthController = () => import('#controllers/admin/auth_controller')
+const UsersController = () => import('#controllers/admin/users_controller')
+const AlphabetsController = () => import('#controllers/admin/alphabets_controller')
+const LessonsController = () => import('#controllers/admin/lessons_controller')
+const ExerciseController = () => import('#controllers/admin/exercises_controller')
 
 router.get('/', async () => {
   return {
