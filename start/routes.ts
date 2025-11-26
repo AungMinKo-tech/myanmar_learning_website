@@ -55,3 +55,5 @@ router
     router.delete('/exercises/:id', [ExerciseController, 'destroy'])
   })
   .prefix('/v1')
+  .use(middleware.auth())
+  .use(middleware.role())
