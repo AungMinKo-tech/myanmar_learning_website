@@ -1,6 +1,6 @@
 import Exercise from '#models/exercise'
 import type { HttpContext } from '@adonisjs/core/http'
-import { createValidator, updateValidator } from '#validators/exercise'
+import { createValidator, updateValidator } from '#validators/admin/exercise'
 import { Type } from '../../enums/lesson_type.js'
 import ExerciseTransformer from '../../transformers/admin/exercise_transformer.js'
 
@@ -63,10 +63,10 @@ export default class ExercisesController {
       const payload = await request.validateUsing(createValidator)
 
       const exercise = await Exercise.create({
-        lesson_id: payload.lesson_id,
+        lesson_id: payload.lessonId,
         question: payload.question,
         type: payload.type as Type,
-        correct_answer: payload.correct_answer,
+        correct_answer: payload.correctAnswer,
       })
 
       return response.created({
@@ -114,8 +114,8 @@ export default class ExercisesController {
         })
       }
 
-      if (payload.lesson_id) {
-        exercise.lesson_id = payload.lesson_id
+      if (payload.lessonId) {
+        exercise.lesson_id = payload.lessonId
       }
 
       if (payload.question) {
@@ -126,8 +126,8 @@ export default class ExercisesController {
         exercise.type = payload.type as Type
       }
 
-      if (payload.correct_answer) {
-        exercise.correct_answer = payload.correct_answer
+      if (payload.correctAnswer) {
+        exercise.correct_answer = payload.correctAnswer
       }
 
       await exercise.save()
