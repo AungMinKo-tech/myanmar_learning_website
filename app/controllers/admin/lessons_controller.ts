@@ -1,6 +1,6 @@
 import Lesson from '#models/lesson'
 import type { HttpContext } from '@adonisjs/core/http'
-import { createValidator, updateValidator } from '#validators/lesson'
+import { createValidator, updateValidator } from '#validators/admin/lesson'
 import { Difficulty } from '../../enums/difficulty.js'
 import LessonTransformer from '../../transformers/admin/lesson_transformer.js'
 
