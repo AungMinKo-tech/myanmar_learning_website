@@ -16,6 +16,7 @@ const AlphabetsController = () => import('#controllers/admin/alphabets_controlle
 const LessonsController = () => import('#controllers/admin/lessons_controller')
 const ExerciseController = () => import('#controllers/admin/exercises_controller')
 const AdminExerciseController = () => import('#controllers/admin/user_exercises_controller')
+const AdminTestimonialController = () => import('#controllers/admin/testimonials_controller')
 
 router.get('/', async () => {
   return {
@@ -58,6 +59,10 @@ router
     router.get('/user-exercises', [AdminExerciseController, 'index'])
     router.get('/user-exercises/:id', [AdminExerciseController, 'show'])
     router.delete('/user-exercises/:id', [AdminExerciseController, 'destroy'])
+
+    router.get('/testimonials', [AdminTestimonialController, 'index'])
+    router.get('/testimonials/:id', [AdminTestimonialController, 'show'])
+    router.delete('/testimonials/:id', [AdminTestimonialController, 'destroy'])
   })
   .prefix('/v1')
   .use(middleware.auth())
