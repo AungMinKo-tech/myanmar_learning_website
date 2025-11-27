@@ -7,7 +7,7 @@ export default class LessonTransformer {
       title: lesson.title,
       description: lesson.description,
       level: lesson.level,
-      type: lesson.type,
+      chapter: lesson.chapter,
       createdAt: lesson.createdAt,
       updatedAt: lesson.updatedAt,
     }

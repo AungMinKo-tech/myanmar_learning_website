@@ -1,11 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
-import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
-import { Type } from '../enums/lesson_type.js'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { Difficulty } from '../enums/difficulty.js'
 import Exercise from '#models/exercise'
-import Alphabet from '#models/alphabet'
-import LessonAlphabet from '#models/lesson_alphabet'
 import UserProgress from '#models/user_progress'
 import UserExercise from '#models/user_exercise'
 
@@ -20,10 +17,10 @@ export default class Lesson extends BaseModel {
   declare public description: string
 
   @column()
-  declare public level: Difficulty
+  declare public chapter: string
 
   @column()
-  declare public type: Type
+  declare public level: Difficulty
 
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
@@ -35,18 +32,6 @@ export default class Lesson extends BaseModel {
     foreignKey: 'lesson_id',
   })
   declare public exercises: HasMany<typeof Exercise>
-
-  @manyToMany(() => Alphabet, {
-    pivotTable: 'lesson_alphabets',
-    pivotForeignKey: 'lesson_id',
-    pivotRelatedForeignKey: 'alphabet_id',
-  })
-  declare public alphabets: ManyToMany<typeof Alphabet>
-
-  @hasMany(() => LessonAlphabet, {
-    foreignKey: 'lesson_id',
-  })
-  declare public lessonAlphabets: HasMany<typeof LessonAlphabet>
 
   @hasMany(() => UserProgress, {
     foreignKey: 'lesson_id',

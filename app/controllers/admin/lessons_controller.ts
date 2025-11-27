@@ -1,7 +1,6 @@
 import Lesson from '#models/lesson'
 import type { HttpContext } from '@adonisjs/core/http'
 import { createValidator, updateValidator } from '#validators/lesson'
-import { Type } from '../../enums/lesson_type.js'
 import { Difficulty } from '../../enums/difficulty.js'
 import LessonTransformer from '../../transformers/admin/lesson_transformer.js'
 
@@ -67,7 +66,7 @@ export default class LessonsController {
         title: payload.title,
         description: payload.description,
         level: payload.level as Difficulty,
-        type: payload.type as Type,
+        chapter: payload.chapter,
       })
 
       return response.created({
@@ -131,8 +130,8 @@ export default class LessonsController {
         lesson.level = payload.level as Difficulty
       }
 
-      if (payload.type) {
-        lesson.type = payload.type as Type
+      if (payload.chapter) {
+        lesson.chapter = payload.chapter
       }
 
       await lesson.save()
