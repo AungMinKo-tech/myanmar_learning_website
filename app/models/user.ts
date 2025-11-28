@@ -4,7 +4,8 @@ import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import UserProgress from '#models/user_progress'
 import UserExercise from '#models/user_exercise'
-import Testimonial from './testimonial.js'
+import Testimonial from '#models/testimonial'
+import Contact from '#models/contact'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -47,4 +48,9 @@ export default class User extends BaseModel {
     foreignKey: 'user_id',
   })
   declare public testimonial: HasMany<typeof Testimonial>
+
+  @hasMany(() => Contact, {
+    foreignKey: 'user_id',
+  })
+  declare public contact: HasMany<typeof Contact>
 }

@@ -1,32 +1,30 @@
-import Testimonial from '#models/testimonial'
+import Contact from '#models/contact'
 import type { HttpContext } from '@adonisjs/core/http'
-import TestimonialTransformer from '../../transformers/admin/testimonial_transformer.js'
+import ContactTransformer from '../../transformers/admin/contact_transformer.js'
 
-export default class TestimonialsController {
+export default class ContactsController {
   public async index({ request, response }: HttpContext) {
     try {
       const page = Number(request.input('page', 1))
       const perPage = Number(request.input('perPage', 10))
 
-      const testimonials = await Testimonial.query().paginate(page, perPage)
+      const contacts = await Contact.query().paginate(page, perPage)
 
       return response.json({
         success: true,
-        content: testimonials
-          .all()
-          .map((testimonial) => TestimonialTransformer.single(testimonial)),
+        content: contacts.all().map((contact) => ContactTransformer.single(contact)),
         meta: {
-          total: testimonials.total,
-          perPage: testimonials.perPage,
-          currentPage: testimonials.currentPage,
-          lastPage: testimonials.lastPage,
+          total: contacts.total,
+          perPage: contacts.perPage,
+          currentPage: contacts.currentPage,
+          lastPage: contacts.lastPage,
         },
         status: 200,
       })
     } catch (error) {
       return response.internalServerError({
         success: false,
-        message: 'Failed to fetch testimonials',
+        message: 'Failed to fetch contacts',
         status: 500,
       })
     }
@@ -34,25 +32,25 @@ export default class TestimonialsController {
 
   public async show({ params, response }: HttpContext) {
     try {
-      const testimonial = await Testimonial.query().where('id', params.id).first()
+      const contact = await Contact.query().where('id', params.id).first()
 
-      if (!testimonial) {
+      if (!contact) {
         return response.notFound({
           success: false,
-          message: 'Testimonial not found',
+          message: 'Contact not found',
           status: 404,
         })
       }
 
       return response.ok({
         success: true,
-        content: TestimonialTransformer.single(testimonial),
+        content: ContactTransformer.single(contact),
         status: 200,
       })
     } catch (error) {
       return response.internalServerError({
         success: false,
-        message: 'Failed to fetch testimonial',
+        message: 'Failed to fetch contact',
         status: 500,
       })
     }
@@ -60,27 +58,27 @@ export default class TestimonialsController {
 
   public async destroy({ params, response }: HttpContext) {
     try {
-      const testimonial = await Testimonial.find(params.id)
+      const contact = await Contact.find(params.id)
 
-      if (!testimonial) {
+      if (!contact) {
         return response.notFound({
           success: false,
-          message: 'Testimonial not found',
+          message: 'Contact not found',
           status: 404,
         })
       }
 
-      await testimonial.delete()
+      await contact.delete()
 
       return response.ok({
         success: true,
-        message: 'Testimonial deleted successfully',
+        message: 'Contact deleted successfully',
         status: 204,
       })
     } catch (error) {
       return response.internalServerError({
         success: false,
-        message: 'Failed to delete testimonial',
+        message: 'Failed to delete contact',
         status: 500,
       })
     }
