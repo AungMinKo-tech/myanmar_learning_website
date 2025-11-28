@@ -10,13 +10,15 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
-const AuthController = () => import('#controllers/admin/auth_controller')
+const AuthController = () => import('#controllers/common/auth_controller')
+const ChangePasswordsController = () => import('#controllers/common/change_passwords_controller')
 const UsersController = () => import('#controllers/admin/users_controller')
 const AlphabetsController = () => import('#controllers/admin/alphabets_controller')
 const LessonsController = () => import('#controllers/admin/lessons_controller')
 const ExerciseController = () => import('#controllers/admin/exercises_controller')
 const AdminExerciseController = () => import('#controllers/admin/user_exercises_controller')
 const AdminTestimonialController = () => import('#controllers/admin/testimonials_controller')
+const AdminContactController = () => import('#controllers/admin/contacts_controller')
 
 router.get('/', async () => {
   return {
@@ -29,6 +31,9 @@ router
     router.post('/register', [AuthController, 'register'])
     router.post('/login', [AuthController, 'login'])
     router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
+    router
+      .post('/change-password', [ChangePasswordsController, 'changePassword'])
+      .use(middleware.auth())
   })
   .prefix('/v1')
 
@@ -63,7 +68,11 @@ router
     router.get('/testimonials', [AdminTestimonialController, 'index'])
     router.get('/testimonials/:id', [AdminTestimonialController, 'show'])
     router.delete('/testimonials/:id', [AdminTestimonialController, 'destroy'])
+
+    router.get('/contacts', [AdminContactController, 'index'])
+    router.get('/contacts/:id', [AdminContactController, 'show'])
+    router.delete('/contacts/:id', [AdminContactController, 'destroy'])
   })
   .prefix('/v1')
   .use(middleware.auth())
-  .use(middleware.role())
+  .use(middleware.role('admin'))
