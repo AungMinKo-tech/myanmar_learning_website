@@ -12,6 +12,7 @@ import { middleware } from './kernel.js'
 
 const AuthController = () => import('#controllers/common/auth_controller')
 const ChangePasswordsController = () => import('#controllers/common/change_passwords_controller')
+const ProfileUpdatesController = () => import('#controllers/common/profile_updates_controller')
 const UsersController = () => import('#controllers/admin/users_controller')
 const AlphabetsController = () => import('#controllers/admin/alphabets_controller')
 const LessonsController = () => import('#controllers/admin/lessons_controller')
@@ -34,6 +35,7 @@ router
     router
       .post('/change-password', [ChangePasswordsController, 'changePassword'])
       .use(middleware.auth())
+    router.post('/profile-update', [ProfileUpdatesController, 'update']).use(middleware.auth())
   })
   .prefix('/v1')
 

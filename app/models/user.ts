@@ -24,6 +24,9 @@ export default class User extends BaseModel {
   declare public role: string
 
   @column()
+  declare public profile: string | null
+
+  @column()
   declare public email_verified_at: DateTime | null
 
   @column.dateTime({ autoCreate: true })
