@@ -20,6 +20,10 @@ const ExerciseController = () => import('#controllers/admin/exercises_controller
 const AdminExerciseController = () => import('#controllers/admin/user_exercises_controller')
 const AdminTestimonialController = () => import('#controllers/admin/testimonials_controller')
 const AdminContactController = () => import('#controllers/admin/contacts_controller')
+const AdminProgressController = () => import('#controllers/admin/user_progresses_controller')
+
+const UserExercisesController = () => import('#controllers/client/user_exercises_controller')
+const UserProgressesController = () => import('#controllers/client/user_progresses_controller')
 
 router.get('/', async () => {
   return {
@@ -74,7 +78,24 @@ router
     router.get('/contacts', [AdminContactController, 'index'])
     router.get('/contacts/:id', [AdminContactController, 'show'])
     router.delete('/contacts/:id', [AdminContactController, 'destroy'])
+
+    router.get('/progresses', [AdminProgressController, 'index'])
+    router.get('/progresses/:id', [AdminProgressController, 'show'])
+    router.delete('/progresses/:id', [AdminProgressController, 'destroy'])
   })
   .prefix('/v1')
   .use(middleware.auth())
   .use(middleware.role('admin'))
+
+router
+  .group(() => {
+    router.get('/lessons/:lessonId/exercises', [UserExercisesController, 'index'])
+    router.post('/lessons/:lessonId/exercises', [UserExercisesController, 'store'])
+    router.get('/lessons/:lessonId/exercises/:id', [UserExercisesController, 'show'])
+    router.put('/lessons/:lessonId/exercises/:id', [UserExercisesController, 'update'])
+
+    router.get('/users/lessons/:lessonId/progress', [UserProgressesController, 'index'])
+  })
+  .prefix('/v1')
+  .use(middleware.auth())
+  .use(middleware.role('user'))

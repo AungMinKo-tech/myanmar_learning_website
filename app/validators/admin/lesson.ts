@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine'
-import { Difficulty } from '../enums/difficulty.js'
+import { Difficulty } from '../../enums/difficulty.js'
 
 export const createValidator = vine.compile(
   vine.object({

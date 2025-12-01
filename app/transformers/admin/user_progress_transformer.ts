@@ -7,7 +7,6 @@ export default class UserProgressTransformer {
       userId: userProgress.user_id,
       lessonId: userProgress.lesson_id,
       progressPercent: userProgress.progress_percent,
-      isCompleted: userProgress.is_completed,
       createdAt: userProgress.createdAt,
       updatedAt: userProgress.updatedAt,
     }

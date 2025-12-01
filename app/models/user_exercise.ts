@@ -24,6 +24,9 @@ export default class UserExercise extends BaseModel {
   @column()
   declare public is_correct: boolean
 
+  @column()
+  declare public is_completed: boolean
+
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
 
