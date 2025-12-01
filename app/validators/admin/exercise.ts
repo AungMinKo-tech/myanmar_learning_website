@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine'
-import { Type } from '../enums/lesson_type.js'
+import { Type } from '../../enums/lesson_type.js'
 
 export const createValidator = vine.compile(
   vine.object({

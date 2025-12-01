@@ -17,9 +17,6 @@ export default class UserProgress extends BaseModel {
   @column()
   declare public progress_percent: string
 
-  @column()
-  declare public is_completed: boolean
-
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
 
