@@ -2,6 +2,7 @@ import UserExercise from '#models/user_exercise'
 import Exercise from '#models/exercise'
 import { createValidator, updateValidator } from '#validators/client/user_exercise'
 import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
 
 export default class UserExercisesController {
   public async index({ auth, params, response }: HttpContext) {
@@ -38,10 +39,11 @@ export default class UserExercisesController {
     try {
       const payload = await request.validateUsing(createValidator)
       const authUser = await auth.getUserOrFail()
+      const user = User.query().where('id', params.userId).first()
       const lessonId = Number(params.lessonId)
       const exerciseId = Number(params.exerciseId)
 
-      if (payload.userId !== authUser.id) {
+      if (Number(user) !== authUser.id) {
         return response.forbidden({
           success: false,
           message: 'You cannot create exercise attempts for another user',
@@ -63,7 +65,7 @@ export default class UserExercisesController {
       const isCorrect = payload.answer.trim() === exercise.correct_answer
 
       const attempt = await UserExercise.create({
-        user_id: payload.userId,
+        user_id: authUser.id,
         lesson_id: lessonId,
         exercise_id: exerciseId,
         answer: payload.answer,
@@ -141,10 +143,11 @@ export default class UserExercisesController {
     try {
       const payload = await request.validateUsing(updateValidator)
       const authUser = await auth.getUserOrFail()
+      const user = User.query().where('id', params.userId).first()
       const lessonId = Number(params.lessonId)
       const exerciseId = Number(params.exerciseId)
 
-      if (payload.userId !== authUser.id) {
+      if (Number(user) !== authUser.id) {
         return response.forbidden({
           success: false,
           message: 'You cannot update exercise attempts for another user',

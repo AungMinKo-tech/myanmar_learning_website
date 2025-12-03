@@ -14,7 +14,7 @@ export default class UserIdMiddleware {
       })
     }
 
-    const userId = params.id
+    const userId = params.userId
 
     if (userId && Number(userId) !== id) {
       return response.forbidden({
