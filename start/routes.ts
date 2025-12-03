@@ -24,6 +24,7 @@ const AdminProgressController = () => import('#controllers/admin/user_progresses
 
 const UserExercisesController = () => import('#controllers/client/user_exercises_controller')
 const UserProgressesController = () => import('#controllers/client/user_progresses_controller')
+const UserTestimonialsController = () => import('#controllers/client/testimonials_controller')
 
 router.get('/', async () => {
   return {
@@ -71,8 +72,6 @@ router
     router.get('/user-exercises/:id', [AdminExerciseController, 'show'])
     router.delete('/user-exercises/:id', [AdminExerciseController, 'destroy'])
 
-    router.get('/testimonials', [AdminTestimonialController, 'index'])
-    router.get('/testimonials/:id', [AdminTestimonialController, 'show'])
     router.delete('/testimonials/:id', [AdminTestimonialController, 'destroy'])
 
     router.get('/contacts', [AdminContactController, 'index'])
@@ -89,13 +88,26 @@ router
 
 router
   .group(() => {
-    router.get('/lessons/:lessonId/exercises', [UserExercisesController, 'index'])
-    router.post('/lessons/:lessonId/exercises', [UserExercisesController, 'store'])
-    router.get('/lessons/:lessonId/exercises/:id', [UserExercisesController, 'show'])
-    router.put('/lessons/:lessonId/exercises/:id', [UserExercisesController, 'update'])
+    router.get('/lessons/:lessonId/:userId/exercises', [UserExercisesController, 'index'])
+    router.post('/lessons/:lessonId/:userId/exercises', [UserExercisesController, 'store'])
+    router.get('/lessons/:lessonId/:userId/exercises/:id', [UserExercisesController, 'show'])
+    router.put('/lessons/:lessonId/:userId/exercises/:id', [UserExercisesController, 'update'])
 
     router.get('/users/lessons/:lessonId/progress', [UserProgressesController, 'index'])
+
+    router.get('/users/:userId/testimonials', [UserTestimonialsController, 'store'])
+    router.get('/users/:userId/testimonials/:id', [UserTestimonialsController, 'destroy'])
   })
   .prefix('/v1')
   .use(middleware.auth())
   .use(middleware.role('user'))
+  .use(middleware.userId)
+
+router
+  .group(() => {
+    router.get('/testimonials', [AdminTestimonialController, 'index'])
+    router.get('/testimonials/:id', [AdminTestimonialController, 'show'])
+  })
+  .prefix('/v1')
+  .use(middleware.auth())
+  .use(middleware.role(['admin', 'user']))
