@@ -4,35 +4,6 @@ import TestimonialTransformer from '../../transformers/client/testimonial_transf
 import { createValidator } from '#validators/client/testimonial'
 
 export default class TestimonialsController {
-  public async index({ request, response }: HttpContext) {
-    try {
-      const page = Number(request.input('page', 1))
-      const perPage = Number(request.input('perPage', 10))
-
-      const testimonials = await Testimonial.query().paginate(page, perPage)
-
-      return response.json({
-        success: true,
-        content: testimonials
-          .all()
-          .map((testimonial) => TestimonialTransformer.single(testimonial)),
-        meta: {
-          total: testimonials.total,
-          perPage: testimonials.perPage,
-          currentPage: testimonials.currentPage,
-          lastPage: testimonials.lastPage,
-        },
-        status: 200,
-      })
-    } catch (error) {
-      return response.internalServerError({
-        success: false,
-        message: 'Failed to fetch testimonials',
-        status: 500,
-      })
-    }
-  }
-
   public async store({ request, response, auth, params }: HttpContext) {
     try {
       const payload = await request.validateUsing(createValidator)
