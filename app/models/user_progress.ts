@@ -1,0 +1,35 @@
+import { DateTime } from 'luxon'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import User from '#models/user'
+import Lesson from '#models/lesson'
+
+export default class UserProgress extends BaseModel {
+  @column({ isPrimary: true })
+  declare public id: number
+
+  @column()
+  declare public user_id: number
+
+  @column()
+  declare public lesson_id: number
+
+  @column()
+  declare public progress_percent: string
+
+  @column.dateTime({ autoCreate: true })
+  declare public createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare public updatedAt: DateTime
+
+  @belongsTo(() => User, {
+    foreignKey: 'user_id',
+  })
+  declare public user: BelongsTo<typeof User>
+
+  @belongsTo(() => Lesson, {
+    foreignKey: 'lesson_id',
+  })
+  declare public lesson: BelongsTo<typeof Lesson>
+}

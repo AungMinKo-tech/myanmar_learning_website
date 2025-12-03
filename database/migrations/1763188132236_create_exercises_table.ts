@@ -1,16 +1,16 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'alphabets'
+  protected tableName = 'exercises'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('letter').notNullable()
-      table.string('romanized').notNullable()
-      table.text('description').notNullable()
-      table.integer('file_id').unsigned().references('id').inTable('files').onDelete('CASCADE')
-      table.integer('audio_id').unsigned().references('id').inTable('audio')
+      table.integer('lesson_id').unsigned().references('id').inTable('lessons').onDelete('CASCADE')
+      table.text('question').notNullable
+      table.enum('type', ['Multiple Choice', 'Matching'])
+      table.text('correct_answer').notNullable()
+      table.specificType('choices', 'text[]').notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

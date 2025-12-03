@@ -1,33 +1,59 @@
 import { DateTime } from 'luxon'
-import hash from '@adonisjs/core/services/hash'
-import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import UserProgress from '#models/user_progress'
+import UserExercise from '#models/user_exercise'
+import Testimonial from '#models/testimonial'
+import Contact from '#models/contact'
 
-const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
-  passwordColumnName: 'password',
-})
-
-export default class User extends compose(BaseModel, AuthFinder) {
+export default class User extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare public id: number
 
   @column()
-  declare fullName: string | null
+  declare public name: string
 
   @column()
-  declare email: string
+  declare public email: string
 
-  @column({ serializeAs: null })
-  declare password: string
+  @column()
+  declare public password: string
+
+  @column()
+  declare public role: string
+
+  @column()
+  declare public profile: string | null
+
+  @column()
+  declare public email_verified_at: DateTime | null
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  declare public updatedAt: DateTime | null
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
+
+  @hasMany(() => UserProgress, {
+    foreignKey: 'user_id',
+  })
+  declare public progressRecords: HasMany<typeof UserProgress>
+
+  @hasMany(() => UserExercise, {
+    foreignKey: 'user_id',
+  })
+  declare public exercises: HasMany<typeof UserExercise>
+
+  @hasMany(() => Testimonial, {
+    foreignKey: 'user_id',
+  })
+  declare public testimonial: HasMany<typeof Testimonial>
+
+  @hasMany(() => Contact, {
+    foreignKey: 'user_id',
+  })
+  declare public contact: HasMany<typeof Contact>
 }
