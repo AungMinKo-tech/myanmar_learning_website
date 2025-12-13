@@ -83,8 +83,8 @@ router
     router.delete('/progresses/:id', [AdminProgressController, 'destroy'])
   })
   .prefix('/v1')
-  .use(middleware.auth())
-  .use(middleware.role('admin'))
+// .use(middleware.auth())
+// .use(middleware.role('admin'))
 
 router
   .group(() => {
