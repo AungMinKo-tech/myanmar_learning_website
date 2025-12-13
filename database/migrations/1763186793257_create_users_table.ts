@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.string('role').notNullable().defaultTo('user')
       table.string('profile').nullable()
       table.timestamp('email_verified_at').nullable()
+      table.boolean('provider').defaultTo(false)
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })
