@@ -29,6 +29,9 @@ export default class User extends BaseModel {
   @column()
   declare public email_verified_at: DateTime | null
 
+  @column()
+  declare public provider: boolean | false
+
   @column.dateTime({ autoCreate: true })
   declare public createdAt: DateTime
 
